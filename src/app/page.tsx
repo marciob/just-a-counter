@@ -84,7 +84,7 @@ export default function Home() {
                 filter: { duration: 0.2 },
               }}
               className={clsx(
-                "absolute text-9xl font-bold tracking-tighter tabular-nums",
+                "absolute text-[12rem] sm:text-[16rem] md:text-[20rem] font-bold tracking-tighter tabular-nums",
                 count === 0 ? "text-zinc-500" : "text-white"
               )}
             >
