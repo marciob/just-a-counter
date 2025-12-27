@@ -1,65 +1,103 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { clsx } from "clsx";
 
 export default function Home() {
+  const [count, setCount] = useState(0);
+  const [direction, setDirection] = useState(0); // -1 for dec, 1 for inc
+
+  const decrement = () => {
+    setDirection(-1);
+    setCount((prev) => prev - 1);
+  };
+
+  const increment = () => {
+    setDirection(1);
+    setCount((prev) => prev + 1);
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="relative w-full h-full flex items-center justify-center bg-black overflow-hidden select-none">
+      {/* Background/Click Areas */}
+      <div className="absolute inset-0 flex flex-row">
+        {/* Decrease Zone (Left) */}
+        <div
+          onClick={decrement}
+          className="w-1/2 h-full cursor-pointer active:bg-white/5 transition-colors duration-200 group relative"
+        >
+          {/* Hover Hint */}
+          <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-red-500/0 to-transparent opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
+          <span className="absolute left-8 top-1/2 -translate-y-1/2 text-zinc-800 text-6xl font-thin opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            -
+          </span>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Increase Zone (Right) */}
+        <div
+          onClick={increment}
+          className="w-1/2 h-full cursor-pointer active:bg-white/5 transition-colors duration-200 group relative"
+        >
+           {/* Hover Hint */}
+           <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-emerald-500/0 to-transparent opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
+           <span className="absolute right-8 top-1/2 -translate-y-1/2 text-zinc-800 text-6xl font-thin opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            +
+          </span>
         </div>
-      </main>
-    </div>
+      </div>
+
+      {/* Counter Display */}
+      <div className="pointer-events-none z-10 flex flex-col items-center">
+        <div className="relative h-48 w-full flex items-center justify-center">
+          <AnimatePresence mode="popLayout" custom={direction}>
+            <motion.span
+              key={count}
+              custom={direction}
+              variants={{
+                enter: (direction: number) => ({
+                  y: direction > 0 ? 50 : -50,
+                  opacity: 0,
+                  scale: 0.5,
+                  filter: "blur(10px)",
+                }),
+                center: {
+                  y: 0,
+                  opacity: 1,
+                  scale: 1,
+                  filter: "blur(0px)",
+                },
+                exit: (direction: number) => ({
+                  y: direction > 0 ? -50 : 50,
+                  opacity: 0,
+                  scale: 1.5,
+                  filter: "blur(10px)",
+                }),
+              }}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                y: { type: "spring", stiffness: 300, damping: 30 },
+                opacity: { duration: 0.2 },
+                scale: { duration: 0.2 },
+                filter: { duration: 0.2 },
+              }}
+              className={clsx(
+                "absolute text-9xl font-bold tracking-tighter tabular-nums",
+                count === 0 ? "text-zinc-500" : "text-white"
+              )}
+            >
+              {count}
+            </motion.span>
+          </AnimatePresence>
+        </div>
+        
+        {/* Label */}
+        <p className="mt-4 text-zinc-600 text-sm italic font-medium tracking-widest uppercase opacity-50">
+          Just A Counter
+        </p>
+      </div>
+    </main>
   );
 }
