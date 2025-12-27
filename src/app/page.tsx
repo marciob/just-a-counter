@@ -49,7 +49,7 @@ export default function Home() {
 
       {/* Counter Display */}
       <div className="pointer-events-none z-10 flex flex-col items-center">
-        <div className="relative h-48 w-full flex items-center justify-center">
+        <div className="relative h-[14rem] sm:h-[18rem] md:h-[22rem] w-full flex items-center justify-center">
           <AnimatePresence mode="popLayout" custom={direction}>
             <motion.span
               key={count}
@@ -92,11 +92,24 @@ export default function Home() {
             </motion.span>
           </AnimatePresence>
         </div>
-        
-        {/* Label */}
-        <p className="mt-4 text-zinc-600 text-sm italic font-medium tracking-widest uppercase opacity-50">
+      </div>
+
+      {/* Footer: Label + Reset */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 z-20">
+        <p className="text-zinc-600 text-sm italic font-medium tracking-widest uppercase opacity-50">
           Just A Counter
         </p>
+        {count !== 0 && (
+          <button
+            onClick={() => {
+              setDirection(0);
+              setCount(0);
+            }}
+            className="pointer-events-auto text-zinc-700 hover:text-zinc-400 text-xs uppercase tracking-widest transition-colors duration-200"
+          >
+            Reset
+          </button>
+        )}
       </div>
     </main>
   );
